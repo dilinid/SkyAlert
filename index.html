@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyAlert | Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter City Name" spellcheck="false">
+            <button><img src="images/search.png" alt="Search icon"></button>
+        </div>
+        <div class="error">
+            <p>City not found</p>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" class="weather-icon" alt="Weather icon showing rain">
+            <h1 class="temperature">25°C</h1>
+            <h2 class="city">Colombo</h2>
+            <div class="details">
+                <div class="block">
+                    <img src="images/humidity.png" alt="Humidity icon">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="block">
+                    <img src="images/wind.png" alt="Wind speed icon">
+                    <div>
+                        <p class="wind">15 km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+        </div>
+
+
+
+        <script>
+            const apiKey = "ff291c609247a80029c57596d2532024";
+            const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        
+            const searchBox = document.querySelector('.search input');
+            const searchButton = document.querySelector('.search button');
+            const weatherIcon = document.querySelector('.weather-icon');
+        
+            async function checkWeather(city) {
+                try {
+                    const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
+                    if (response.status === 404) {
+                        document.querySelector('.error').style.display = 'block';
+                        document.querySelector('.weather').style.display = 'none';
+                    } else {
+                        const data = await response.json();
+        
+                        // Update UI
+                        document.querySelector('.city').innerHTML = data.name;
+                        document.querySelector('.temperature').innerHTML = Math.round(data.main.temp) + '°C';
+                        document.querySelector('.humidity').innerHTML = data.main.humidity + '%';
+                        document.querySelector('.wind').innerHTML = data.wind.speed + 'km/h';
+        
+                        // Update weather icon and notification
+                        const condition = data.weather[0].main;
+                        let icon = 'images/cloudy.png'; // Default icon
+                        let message = "Have a great day!"; // Default message
+        
+                        if (condition === 'Clouds') {
+                            icon = 'images/clouds.png';
+                            message = "The sun is shy today! A light jacket might come in handy!";
+                        } else if (condition === 'Rain') {
+                            icon = 'images/rain.png';
+                            message = "Don’t forget your umbrella—stay dry and safe!";
+                        } else if (condition === 'Clear') {
+                            icon = 'images/clear.png';
+                            message = "It’s sunny and bright! Don’t forget your sunscreen.";
+                        } else if (condition === 'Mist') {
+                            icon = 'images/mist.png';
+                            message = "Low visibility due to mist. Drive carefully!";
+                        } else if (condition === 'Drizzle') {
+                            icon = 'images/drizzle.png';
+                            message = "A light drizzle is expected. You might need a raincoat.";
+                        } else if (condition === 'Snow') {
+                            icon = 'images/snow.png';
+                            message = "Expect snowy roads. Drive safely!";
+                        }
+        
+                        weatherIcon.src = icon;
+        
+                        // Send notification
+                        sendNotification(message, icon);
+        
+                        // Show weather details
+                        document.querySelector('.weather').style.display = 'block';
+                        document.querySelector('.error').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('There has been a problem with your fetch operation:', error);
+                }
+            }
+        
+            searchButton.addEventListener('click', () => {
+                const city = searchBox.value;
+                checkWeather(city);
+            });
+        
+            // Request notification permission
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission !== 'granted') {
+                        console.warn("Notifications are disabled.");
+                    }
+                });
+            }
+        
+            function sendNotification(message, icon) {
+                if (Notification.permission === 'granted') {
+                    new Notification("Weather Alert", {
+                        body: message,
+                        icon: icon 
+                    });
+                }
+            }
+        </script>
+        
+</body>
+</html>
