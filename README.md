@@ -1,4 +1,4 @@
-# Weather App 🌦️
+# SkyAlert - Weather App 🌦️
 A simple and responsive weather application built with HTML, CSS, and JavaScript, using a public weather API to fetch real-time weather data.
 
 ## Features
