@@ -4,7 +4,7 @@ A simple and responsive weather application built with HTML, CSS, and JavaScript
 ## Features
 -  Search weather updates by city name 🌍
 -  Displays temperature, weather condition, and other details 🌡️
--  Fully responsive design for mobile and desktop 📱
+-  Personalized weather notifications based on current weather condition 📱
 
 ## Technologies Used
 - Frontend: HTML, CSS, JavaScript
